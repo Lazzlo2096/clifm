@@ -12,7 +12,7 @@ import Brick.Main (customMain, showFirstCursor, App(..))
 import Brick.Themes (Theme, themeToAttrMap, loadCustomizations)
 import Brick.AttrMap (AttrMap)
 import Brick.BChan (newBChan)
-import Graphics.Vty (mkVty, standardIOConfig, setMode, outputIface, Mode(Mouse))
+import Graphics.Vty (mkVty, standardIOConfig, setMode, outputIface, Mode(Mouse), defaultConfig)
 
 -- entry point: parses the arguments and starts the brick application
 
@@ -90,7 +90,8 @@ runUI options = do
         return v
   eventChan <- Brick.BChan.newBChan 10
   state <- Mngr.makeState path editComm eventChan (threadNum options)
-  void $ customMain buildVty (Just eventChan) (app atrm) state
+  initialVty <- buildVty
+  void $ customMain initialVty buildVty (Just eventChan) (app atrm) state
 
 app :: AttrMap -> App Mngr.State (ThreadEvent Tab.Tab) Name
 app atrm = App {
